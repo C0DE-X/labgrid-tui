@@ -113,6 +113,10 @@ class Labgrid:
 
     def env(self) -> dict[str, str]:
         env = dict(os.environ)
+        # labgrid-client is a Python program: writing to a pipe, its output is
+        # block-buffered, so `monitor` events would only arrive once ~8 KB piled up.
+        # Unbuffered output makes live updates actually live.
+        env["PYTHONUNBUFFERED"] = "1"
         if self.profile.username:
             env["LG_USERNAME"] = self.profile.username
         if self.profile.hostname:

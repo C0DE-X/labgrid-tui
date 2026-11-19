@@ -241,3 +241,12 @@ async def test_kill_already_exited_process():
     proc = ExitedProc()
     await _kill(proc)  # must not raise
     assert proc.waited
+
+
+def test_subprocess_output_is_unbuffered(monkeypatch):
+    """labgrid-client must flush every line, or monitor events arrive minutes late."""
+    from labgrid_tui.backend import Labgrid
+    from labgrid_tui.config import Profile
+
+    monkeypatch.delenv("PYTHONUNBUFFERED", raising=False)
+    assert Labgrid(Profile("t")).env()["PYTHONUNBUFFERED"] == "1"

@@ -344,8 +344,10 @@ async def test_survives_network_blip(tmp_path):
         _stop(coord)
 
 
-async def test_live_updates(coordinator):
+async def test_live_updates(coordinator, monkeypatch):
     """With live updates, a change by someone else shows up without polling."""
+    # Like on a normal machine: labgrid-client output must not depend on this being set
+    monkeypatch.delenv("PYTHONUNBUFFERED", raising=False)
     addr, lg = coordinator
     profile = Profile(name="t", coordinator=addr, username="tester", hostname="testhost")
     cfg = Config(
