@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "labgrid-tui"
+dynamic = ["version"]
+description = "Terminal UI for labgrid: list, filter, reserve, acquire and release places"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "C0DE-X" }]
+keywords = ["labgrid", "tui", "textual", "embedded", "testing", "lab", "hardware"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console :: Curses",
+    "Intended Audience :: Developers",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Embedded Systems",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = ["textual>=0.80"]
+
+[project.urls]
+Homepage = "https://github.com/C0DE-X/labgrid-tui"
+Issues = "https://github.com/C0DE-X/labgrid-tui/issues"
+Changelog = "https://github.com/C0DE-X/labgrid-tui/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+# labgrid-client must be on PATH; install it here if it isn't already.
+labgrid = ["labgrid>=24.0"]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "ruff==0.17.5", "build"]
+
+[project.scripts]
+labgrid-tui = "labgrid_tui.__main__:main"
+
+[tool.hatch.version]
+path = "src/labgrid_tui/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "README.md", "CHANGELOG.md", "LICENSE", "config.example.toml"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/labgrid_tui"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "ASYNC"]
+ignore = [
+    "SIM105",    # contextlib.suppress: explicit try/except reads clearer in UI code
+    "ASYNC109",  # timeout parameters are deliberate: they bound labgrid-client subprocesses
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011", "ASYNC220", "ASYNC251"]  # test setup may block briefly

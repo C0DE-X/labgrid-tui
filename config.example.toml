@@ -1,0 +1,73 @@
+# labgrid-tui configuration
+# Copy to ~/.config/labgrid-tui/config.toml
+#
+# Coordinator precedence:
+#   --coordinator flag > profile "coordinator" > $LG_COORDINATOR > 127.0.0.1:20408
+
+default_profile = "office"
+
+# Path or name of the labgrid-client executable
+# labgrid_client = "/opt/labgrid/venv/bin/labgrid-client"
+
+[profiles.office]
+coordinator = "labgrid.office.lan:20408"
+# proxy = "jumphost.example.com"   # passed as -P (SSH proxy)
+# username = "alice"               # sets LG_USERNAME
+# hostname = "alice-laptop"        # sets LG_HOSTNAME
+# SSH into exporter hosts (Exporters tab, key s)
+# ssh_user = "labadmin"            # default: ~/.ssh/config / local user
+# ssh_jump = ""                    # "" = use `proxy` as -J, "none" = no jump host
+# ssh_command = "ssh {jump} {target}"   # {target} {host} {user} {name} {fqdn} {jump}
+
+[profiles.remote]
+coordinator = "127.0.0.1:20408"
+proxy = "jumphost.example.com"
+
+[ui]
+# Live updates via `labgrid-client monitor`; polling is only the fallback
+live_updates = true
+# Polling interval when live updates are off/unavailable, and for open reservations
+refresh_seconds = 5
+# Full refresh as a safety net while live updates are on
+fallback_refresh_seconds = 60
+default_filter = ""
+# Places held by others longer than this get a ⚠ marker
+stale_hours = 24
+# After a reservation is allocated, acquire the place automatically
+auto_acquire = true
+# Press F1..F9 to apply these filters
+saved_filters = ["board=imx8*", "board=rpi4", "name=lab-*"]
+# Tags shown as their own columns (removed from the combined "Other tags" column)
+tag_columns = ["board"]
+# Long cells: false = cut off with "…", true = wrap onto several lines  (key: w)
+wrap = false
+# Show the combined tags column  (key: t)
+show_tags = true
+# Exporter column on the Places tab: "name" (labgrid exporter name), "host" (short
+# hostname) or "fqdn". The Exporters tab always shows the hostname.
+exporter_display = "name"
+# Hide places without match patterns, e.g. places that only stand for an exporter (key: h)
+hide_unlinked = true
+# Debug console with every labgrid-client call (key: d); D hides the refresh calls
+debug_console = false
+debug_hide_refresh = false
+# Also append every call to this file (tab-separated), e.g. "~/.cache/labgrid-tui/calls.log"
+log_file = ""
+
+[ui.column_widths]
+# Max width in characters, 0 = as wide as the content. Keys: name, tags, exporter,
+# owner, comment, "tag:<key>". Change the tags width while running with < and >.
+tags = 40
+comment = 30
+
+[connection]
+# Seconds before a single labgrid-client call is considered hung
+timeout = 15
+# Retries after a connection error (backoff 0.5s, 1s, 2s, 4s … capped at max_retry_delay)
+retries = 4
+retry_delay = 0.5
+max_retry_delay = 8
+# While waiting for a reservation: give up after the coordinator was unreachable this long
+wait_give_up = 120
+# If a coordinator restart drops your waiting reservation, create it again automatically
+rereserve = true

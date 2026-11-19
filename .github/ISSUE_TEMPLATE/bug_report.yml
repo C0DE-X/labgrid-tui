@@ -1,0 +1,40 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: debug
+    attributes:
+      label: Debug console output
+      description: |
+        Press `d` in labgrid-tui to open the debug console (or set `ui.log_file` in the config)
+        and paste the relevant `labgrid-client` calls and errors. Remove hostnames if needed.
+      render: text
+  - type: textarea
+    id: labgrid-output
+    attributes:
+      label: labgrid-client output (for display/parsing problems)
+      description: |
+        If something is shown wrong or missing, the output of e.g.
+        `labgrid-client -v places` or `labgrid-client -v -v resources` helps a lot.
+      render: text
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Output of `labgrid-tui --version` and `pip show labgrid | grep Version`
+      placeholder: labgrid-tui 0.1.0, labgrid 26.0.1
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS and terminal
+      placeholder: Ubuntu 24.04 in WSL2, Windows Terminal
