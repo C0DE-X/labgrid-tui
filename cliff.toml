@@ -27,7 +27,7 @@ body = """
 {% else -%}
 ## [Unreleased]
 {% endif -%}
-{% if message %}
+{% if message and message | trim != version %}
 {{ message | trim }}
 {% endif -%}
 {% for group, commits in commits | group_by(attribute="group") %}
