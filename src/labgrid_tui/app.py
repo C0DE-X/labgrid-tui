@@ -49,6 +49,7 @@ from .filtering import (
     place_status,
     sort_places,
 )
+from .keymenu import GROUPS, KeyMenu, MenuEntry
 from .parser import Place, Reservation, Resource
 from .ssh import ssh_command
 
@@ -170,8 +171,10 @@ class LabgridTUI(App):
         Binding("ctrl+r,f5", "refresh", "Refresh", show=False),
         Binding("tab", "focus_next", "Switch pane", show=False),
         Binding("q", "quit", "Quit"),
-        Binding("1", "show_tab('tab-places')", "Places", show=False),
-        Binding("2", "show_tab('tab-exporters')", "Exporters", show=False),
+        Binding("space", "show_menu", "All keys"),
+        Binding("question_mark", "show_menu", "All keys", show=False),
+        Binding("1", "show_tab('tab-places')", "Places tab", show=False),
+        Binding("2", "show_tab('tab-exporters')", "Exporters tab", show=False),
         Binding("h", "toggle_unlinked", "Unlinked places", show=False),
         Binding("d", "toggle_debug", "Debug"),
         Binding("D", "toggle_debug_refresh", "Debug: hide refresh", show=False),
@@ -197,6 +200,65 @@ class LabgridTUI(App):
         "saved_filter",
     }
     EXPORTERS_ONLY = {"ssh"}
+
+    # -- space menu ------------------------------------------------------------
+
+    def _toggle_state(self, action: str) -> str | None:
+        def on_off(value: bool) -> str:
+            return "on" if value else "off"
+
+        if action == "toggle_free":
+            return on_off(self.free_only)
+        if action == "toggle_unlinked":
+            return on_off(self.show_unlinked)
+        if action == "toggle_wrap":
+            return on_off(self.wrap)
+        if action == "toggle_tags":
+            return on_off(self.show_tags)
+        if action == "toggle_debug":
+            return on_off(bool(self.query_one("#debug", RichLog).display))
+        if action == "toggle_debug_refresh":
+            return on_off(self.debug_hide_refresh)
+        if action == "toggle_sort":
+            return f"by {self.sort_by}"
+        return None
+
+    def menu_entries(self) -> list[MenuEntry]:
+        """Every key that works right now, for the space menu."""
+        entries: list[MenuEntry] = []
+        saved = self.config.ui.saved_filters
+        for binding in self.BINDINGS:
+            action = binding.action
+            name, _, params = action.partition("(")
+            if name == "show_menu":
+                continue
+            args = tuple(p.strip().strip("'\"") for p in params.rstrip(")").split(",") if p)
+            if not self.check_action(name, args):
+                continue
+            group, label = GROUPS.get(name, ("Other", ""))
+            label = label or binding.description
+            if name == "saved_filter":
+                index = int(args[0])
+                if index > len(saved):
+                    continue  # only list filters that exist in the config
+                label = f"Filter: {saved[index - 1]}"
+            entries.append(
+                MenuEntry(binding.key.split(","), action, group, label, self._toggle_state(name))
+            )
+        return entries
+
+    def action_show_menu(self) -> None:
+        tab = self.query_one("#tabs", TabbedContent).active
+        title = "Keys · " + ("Exporters" if tab == "tab-exporters" else "Places")
+        self.push_screen(KeyMenu(self.menu_entries(), title), self._menu_key_pressed)
+
+    def _menu_key_pressed(self, key: str | None) -> None:
+        if key is None:
+            return
+        for entry in self.menu_entries():
+            if key in entry.keys:
+                self.call_later(self.run_action, entry.action)
+                return
 
     def check_action(self, action: str, parameters: tuple) -> bool | None:
         if action in self.PLACES_ONLY or action in self.EXPORTERS_ONLY:

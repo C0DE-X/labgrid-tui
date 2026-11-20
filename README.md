@@ -53,8 +53,13 @@ labgrid-tui --list-profiles
 
 ## Keys
 
+Press **Space** (or `?`) for a menu of every key that works on the current tab, including the
+ones not shown in the footer, with the on/off state of toggles. Press a key in the menu to run
+it; Esc or Space closes it.
+
 | Key | Action |
 |---|---|
+| `Space` / `?` | Menu of all keys for the current tab |
 | `/` | Focus filter (Enter returns to the table) |
 | `1` / `2` | Places tab / Exporters tab |
 | `F1`–`F9` | Apply a saved filter from the config |
