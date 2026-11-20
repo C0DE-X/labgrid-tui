@@ -5,6 +5,12 @@ All notable changes to this project are documented here. The format follows
 [Semantic Versioning](https://semver.org/). It is generated from the commit
 history with [git-cliff](https://git-cliff.org).
 
+## [0.2.0] - 2026-11-20
+
+### Added
+
+- Space menu listing all keys for the current tab ([638652e](https://github.com/C0DE-X/labgrid-tui/commit/638652e6ce25080719387180b80c916685847016))
+
 ## [0.1.0] - 2026-11-19
 
 First public version: a terminal UI for labgrid to see, filter, reserve, acquire and
@@ -28,5 +34,6 @@ release places, with an overview of the exporters.
 
 - Make live updates arrive immediately ([71a0a66](https://github.com/C0DE-X/labgrid-tui/commit/71a0a66061fda5b26a2c0247fd9fea2c6da40e97))
 
+[0.2.0]: https://github.com/C0DE-X/labgrid-tui/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/C0DE-X/labgrid-tui/releases/tag/v0.1.0
 
