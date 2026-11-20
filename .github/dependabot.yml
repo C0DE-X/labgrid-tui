@@ -1,10 +1,19 @@
 version: 2
 updates:
+  # Python dependencies are lower bounds (textual>=…, labgrid>=…). CI always tests
+  # the newest versions anyway, so only open a PR when a new release falls outside
+  # the allowed range (e.g. the exact ruff pin), not to raise minimum versions.
   - package-ecosystem: pip
     directory: /
     schedule:
       interval: weekly
+    versioning-strategy: increase-if-necessary
+
+  # These change what CI actually runs: keep them, but as one PR per week.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]

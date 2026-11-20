@@ -22,7 +22,10 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - run: pip install ruff==0.17.5
+      # Same ruff version as the dev extra in pyproject.toml (kept up to date by Dependabot)
+      - name: Install ruff
+        run: pip install "$(grep -oE 'ruff==[0-9.]+' pyproject.toml)"
+      - run: ruff --version
       - name: ruff check
         run: ruff check --output-format=github .
       - name: ruff format
