@@ -35,7 +35,7 @@ Changelog = "https://github.com/C0DE-X/labgrid-tui/blob/main/CHANGELOG.md"
 [project.optional-dependencies]
 # labgrid-client must be on PATH; install it here if it isn't already.
 labgrid = ["labgrid>=24.0"]
-dev = ["pytest>=9.2.0", "pytest-asyncio>=1.5.0", "ruff==0.17.5", "build"]
+dev = ["pytest>=9.2.0", "pytest-asyncio>=1.5.0", "ruff==0.17.6", "build"]
 
 [project.scripts]
 labgrid-tui = "labgrid_tui.__main__:main"
